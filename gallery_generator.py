@@ -70,7 +70,7 @@ def generate_html(title, image_folder, template_path, css_path, js_path, output_
         shutil.copy(os.path.join(image_folder, image_file), os.path.join(output_images_folder, "GAL_" + image_file))
 
     copied_image_paths = [f'"{path}"' for path in image_paths]
-    image_tags         = '\n'.join([f'            <img src={path} alt="{os.path.basename(path)}" onclick=\'open_image_viewer({path})\'>'
+    image_tags         = '\n'.join([f'            <img src={path} alt=\"{os.path.basename(path)} onclick=\'open_image_viewer({path})\'>'
                                     for path in copied_image_paths])
 
     template_content = template_content.replace('{{title}}', title)
