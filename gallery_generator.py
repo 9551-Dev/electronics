@@ -60,14 +60,14 @@ def generate_html(title, image_folder, template_path, css_path, js_path, output_
         css_content = css_file.read()
 
     image_files = get_image_filenames(image_folder)
-    image_paths = [os.path.join(images_directory_name, os.path.basename(image_file)) for image_file in image_files]
+    image_paths = [os.path.join(images_directory_name, "GAL_" + os.path.basename(image_file)) for image_file in image_files]
 
     output_images_folder = os.path.join(output_folder, images_directory_name)
     os.makedirs(output_images_folder, exist_ok=True)
 
     for image_file, image_path in zip(image_files, image_paths):
         print(f"Copying image: {image_file} to {output_images_folder}")
-        shutil.copy(os.path.join(image_folder, image_file), output_images_folder)
+        shutil.copy(os.path.join(image_folder, image_file), os.path.join(output_images_folder, "GAL_" + image_file))
 
     copied_image_paths = [f'"{path}"' for path in image_paths]
     image_tags         = '\n'.join([f'            <img src={path} alt="{os.path.basename(path)}" onclick=\'open_image_viewer({path})\'>'
