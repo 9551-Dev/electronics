@@ -171,7 +171,6 @@ def generate_directory_index(directory_path,index,index_name):
         index_content = index_content.replace('{{header}}',remove_base_dir(index,directory_path))
 
         directory_list_content = ""
-        file_list_content = ""
 
         directory_items = []
         file_items = []
@@ -185,16 +184,16 @@ def generate_directory_index(directory_path,index,index_name):
                     file_items.append(item)
 
         directory_items.sort()
-        file_items.sort()
+        file_items     .sort()
 
         for item in directory_items:
-            directory_list_content += f"        <li><a href=\"{item}/\">{item}/ <sub>[DIR]</sub></a></li>\n"
+            directory_list_content += f"        <li><a class='index_directory' href=\"{item}/\">{item}/ <sub>[DIR]</sub></a></li>\n"
         for item in file_items:
-            file_list_content += f"        <li><a href=\"{item}\">{item} <sub>[FILE]</sub></a></li>\n"
+            directory_list_content += f"        <li><a class='index_file' href=\"{item}\">{item} <sub>[FILE]</sub></a></li>\n"
 
-        directory_list_content += f"        <li><a href=\"{index_name}\">{index_name} <sub>[THIS]</sub></a></li>\n"
+        directory_list_content += f"        <li><a class='index_self' href=\"{index_name}\">{index_name} <sub>[THIS]</sub></a></li>\n"
 
-        index_content = index_content.replace('{{directory_list}}',directory_list_content+file_list_content)
+        index_content = index_content.replace('{{directory_list}}',directory_list_content)
 
         if os.path.normpath(directory_path) == os.path.normpath(index["base_directory"]):
             index_content = index_content.replace("{{comment_start}}","<!--")
