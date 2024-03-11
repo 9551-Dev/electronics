@@ -17,9 +17,16 @@ def check_folder_exists(folder_path):
 
 def remove_base_dir(index,path):
     if path.split(os.sep)[0] == index["base_directory"]:
-        return os.path.dirname(os.sep.join(path.split(os.sep)[1:]))
+        return os.sep.join(path.split(os.sep)[1:])
     else:
         return path
+
+def config_get_default(config,group,value,*default):
+    if config.has_option(group,value):
+        return config.get(group,value)
+    else:
+        return default[0]
+
 
 def read_config(config_path):
     print("Reading configuration...")
@@ -27,36 +34,44 @@ def read_config(config_path):
     config.read(config_path)
 
     settings = {
-        "title":        config.get("Settings","title"),
-        "image_folder": config.get("Settings","image_folder"),
+        "title":        config_get_default(config,"Settings","title","Gallery title!"),
+        "image_folder": config_get_default(config,"Settings","image_folder","pictures"),
+    }
+
+    embed = {
+        "title"      : config_get_default(config,"Embed","title","An image gallery"),
+        "description": config_get_default(config,"Embed","description","A very filled image gallery with images"),
+        "image"      : config_get_default(config,"Embed","image","https://github.com/9551-Dev.png"),
+        "color"      : config_get_default(config,"Embed","color","#90f91f"),
+        "url"        : config_get_default(config,"Embed","url","https://github.com/9551-Dev")
     }
 
     index = {
-        "index_style":     config.get("Index","page")               if "Index" in config else None,
-        "enabled":         config.get("Index","enabled") == "true"  if "Index" in config else None,
-        "base_directory":  config.get("Index","base_directory")     if "Index" in config else None,
-        "base_index_name": config.get("Index","base_index_name")    if "Index" in config else None,
+        "index_style":     config_get_default(config,"Index","page","assets/index_template.html"),
+        "enabled":         config_get_default(config,"Index","enabled","true") == "true",
+        "base_directory":  config_get_default(config,"Index","base_directory","docs"),
+        "base_index_name": config_get_default(config,"Index","base_index_name","index.html"),
 
-        "generate_project_index":      config.get("Index.special_rules","generate_project_index")      == "true" if "Index.special_rules" in config else None,
-        "generate_project_root_index": config.get("Index.special_rules","generate_project_root_index") == "true" if "Index.special_rules" in config else None,
-        "project_index_name":          config.get("Index.special_rules","project_index_name")          if "Index.special_rules" in config else None,
-        "project_root_index_name":     config.get("Index.special_rules","project_root_index_name")     if "Index.special_rules" in config else None,
+        "generate_project_index":      config_get_default(config,"Index.special_rules","generate_project_index","false"),
+        "generate_project_root_index": config_get_default(config,"Index.special_rules","generate_project_root_index","false"),
+        "project_index_name":          config_get_default(config,"Index.special_rules","project_index_name","index.html"),
+        "project_root_index_name":     config_get_default(config,"Index.special_rules","project_root_index_name","dir.html"),
 
-        "root_index_name":  config.get("Index.special_rules","root_index_name")  if "Index.special_rules" in config else None,
-        "root_index_super": config.get("Index.special_rules","root_index_super") if "Index.special_rules" in config else None,
+        "root_index_name":  config_get_default(config,"Index.special_rules","root_index_name","root_index.html"),
+        "root_index_super": config_get_default(config,"Index.special_rules","root_index_super","UNUSED"),
     }
 
     core = {
-        "template_path": config.get("Core","template_path"),
-        "css_path":      config.get("Core","css_path"),
-        "js_path":       config.get("Core","js_path")
+        "template_path": config_get_default(config,"Core","template_path"),
+        "css_path":      config_get_default(config,"Core","css_path"),
+        "js_path":       config_get_default(config,"Core","js_path")
     }
 
     output = {
-        "output_folder":         config.get("Output", "output_folder"),
-        "images_directory_name": config.get("Output", "images_directory_name"),
-        "core_directory_name":   config.get("Output", "core_directory_name"),
-        "output_file_name":      config.get("Output", "output_file_name")
+        "output_folder":         config_get_default(config,"Output","output_folder","PLS_CONFIGURE_THX_:3"),
+        "images_directory_name": config_get_default(config,"Output","images_directory_name","images"),
+        "core_directory_name":   config_get_default(config,"Output","core_directory_name","core"),
+        "output_file_name":      config_get_default(config,"Output","output_file_name","index.html")
     }
 
     required_files = [settings['image_folder'], core['template_path'], core['css_path'], core['js_path']]
@@ -66,7 +81,7 @@ def read_config(config_path):
             exit(1)
 
     print("Configuration read successfully.")
-    return settings, core, output, index
+    return settings,core,output,index,embed
 
 def get_image_filenames(image_folder):
     print(f"Scanning image folder: {image_folder}")
@@ -76,7 +91,7 @@ def get_image_filenames(image_folder):
         print(f" - {image_file}")
     return sorted(image_files)
 
-def generate_html(settings, core, output):
+def generate_html(settings,core,output,embed):
     print("\nGenerating HTML...")
     with open(core['template_path'], 'r') as template_file:
         template_content = template_file.read()
@@ -99,10 +114,16 @@ def generate_html(settings, core, output):
     image_tags         = '\n'.join([f'            <img src={path} alt=\"{os.path.basename(path)} onclick=\'open_image_viewer({path})\'>'
                                     for path in copied_image_paths])
 
-    template_content = template_content.replace('{{title}}', settings['title'])
-    template_content = template_content.replace('{{css_path}}', os.path.join(output['core_directory_name'], os.path.basename(core['css_path'])))
-    template_content = template_content.replace('{{js_path}}',  os.path.join(output['core_directory_name'], os.path.basename(core['js_path'])))
-    template_content = template_content.replace('{{image_tags}}', image_tags)
+    template_content = template_content.replace("{{title}}", settings["title"])
+    template_content = template_content.replace("{{css_path}}", os.path.join(output["core_directory_name"], os.path.basename(core["css_path"])))
+    template_content = template_content.replace("{{js_path}}",  os.path.join(output["core_directory_name"], os.path.basename(core["js_path"])))
+    template_content = template_content.replace("{{image_tags}}", image_tags)
+
+    template_content = template_content.replace("{{embed_title}}",       embed["title"])
+    template_content = template_content.replace("{{embed_description}}", embed["description"])
+    template_content = template_content.replace("{{embed_url}}",         embed["url"])
+    template_content = template_content.replace("{{embed_image}}",       embed["image"])
+    template_content = template_content.replace("{{embed_color}}",       embed["color"])
 
     image_paths_js = ",\n    ".join(copied_image_paths)
     js_content     = js_content.replace('{{image_paths}}', image_paths_js)
@@ -144,7 +165,9 @@ def generate_directory_index(directory_path, index, index_name):
 
     index_content = get_index_content(index)
     if index_content:
-        index_content = index_content.replace('{{title}}',f"Index of {directory_path}")
+
+        index_content = index_content.replace('{{title}}',f"Index of <span style='font-size:50px;color:DodgerBlue'>/{remove_base_dir(index,directory_path)}</span>")
+        index_content = index_content.replace('{{header}}',remove_base_dir(index,directory_path))
 
         directory_list_content = ""
         file_list_content = ""
@@ -175,11 +198,11 @@ def generate_directory_index(directory_path, index, index_name):
         if os.path.normpath(directory_path) == os.path.normpath(index["base_directory"]):
             index_content = index_content.replace("{{comment_start}}","<!--")
             index_content = index_content.replace("{{comment_end}}",  "-->")
-        elif remove_base_dir(index,directory_path) == "":
+        elif os.path.dirname(remove_base_dir(index,directory_path)) == "":
             index_content = index_content.replace('{{parent}}',"")
             index_content = remove_comment(index_content)
         elif (directory_path.split(os.sep)[0] == index["base_directory"]) and (os.path.normpath(directory_path) != os.path.normpath(index["base_directory"])):
-            index_content = index_content.replace('{{parent}}',f"/{remove_base_dir(index,directory_path)}/")
+            index_content = index_content.replace('{{parent}}',f"/{os.path.dirname(remove_base_dir(index,directory_path))}/")
             index_content = remove_comment(index_content)
         else:
             index_content = index_content.replace('{{parent}}',f"{os.path.dirname(directory_path)}")
@@ -220,12 +243,12 @@ if __name__ == '__main__':
         exit(1)
 
     config_path = sys.argv[1]
-    settings, core, output, index = read_config(config_path)
+    settings,core,output,index,embed = read_config(config_path)
 
     print(f'\nTitle: {settings["title"]}')
     print(f'Index files: {index["enabled"] and "enabled" or "disabled"} ({index["enabled"]})')
 
-    generate_html(settings, core, output)
+    generate_html(settings,core,output,embed)
 
     if index["enabled"]:
         generate_directory_indexes(output['output_folder'], output, index)

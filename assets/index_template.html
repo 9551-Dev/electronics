@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{title}}</title>
+    <title>{{header}}</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -31,13 +31,30 @@
         a:hover {
             text-decoration: underline;
         }
+
+        button {
+            background-color: transparent;
+            color: #007bff;
+            border: 1px solid #007bff;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+
     </style>
 </head>
 <body>
     <h1>{{title}}</h1>
     <ul>
         {{directory_list}}
-        {{comment_start}}<li><button onclick="location.href='..';">.. (zap.devvie.cc{{parent}})</button></li>{{comment_end}}
     </ul>
+    {{comment_start}}<button onclick="location.href='..';">.. (zap.devvie.cc{{parent}})</button>{{comment_end}}
 </body>
 </html>
