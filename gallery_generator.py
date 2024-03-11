@@ -98,6 +98,27 @@ def generate_html(title, image_folder, template_path, css_path, js_path, output_
 
     print(f'Generated {output_file_path} successfully.')
 
+def generate_directory_index(directory_path):
+    print(f"Generating index for directory: {directory_path}")
+    index_content = "<!DOCTYPE html>\n<html>\n<head>\n<title>Index of /</title>\n</head>\n<body>\n<h1>Index of /</h1>\n<ul>\n"
+    for item in os.listdir(directory_path):
+        item_path = os.path.join(directory_path, item)
+        if os.path.isdir(item_path):
+            index_content += f"<li><a href=\"{item}/\">{item}/</a></li>\n"
+        else:
+            index_content += f"<li><a href=\"{item}\">{item}</a></li>\n"
+    index_content += "</ul>\n</body>\n</html>\n"
+    with open(os.path.join(directory_path, 'index.html'), 'w') as index_file:
+        index_file.write(index_content)
+
+def generate_directory_indexes(output_folder):
+    print(f"\nGenerating directory indexes for: {output_folder}")
+    for root, dirs, files in os.walk(output_folder):
+        for directory in dirs:
+            directory_path = os.path.join(root, directory)
+            sub_dir = os.path.dirname(os.path.dirname(directory_path))
+            generate_directory_index(sub_dir)
+
 if __name__ == '__main__':
     if len(sys.argv) != 2:
         print("Usage: python script.py [config_path]")
@@ -117,3 +138,4 @@ if __name__ == '__main__':
     print(f'Output File Name: {output_file_name}')
 
     generate_html(title, image_folder, template_path, css_path, js_path, output_folder, images_directory_name, core_directory_name, output_file_name)
+    generate_directory_indexes(output_folder)
