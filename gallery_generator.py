@@ -15,9 +15,10 @@ def check_folder_exists(folder_path):
         return False
     return True
 
-def remove_base_dir(index,path):
-    if path.split(os.sep)[0] == index["base_directory"]:
-        return os.sep.join(path.split(os.sep)[1:])
+def remove_base_dir(index, path):
+    base_dir = index["base_directory"]
+    if path.startswith(base_dir):
+        return path[len(base_dir) + len(os.sep)-1:].lstrip(os.sep)
     else:
         return path
 
@@ -217,10 +218,21 @@ def generate_directory_indexes(output_folder,output,index):
     print(f"\nGenerating directory indexes for: {output_folder}")
 
     output_dirs = output_folder.split(os.path.sep)
+    directory_paths = []
 
     for i in range(len(output_dirs)):
         directory_path = os.path.join(*output_dirs[:i+1])
-        if directory_path != output_folder and os.path.normpath(directory_path) != os.path.normpath(index["base_directory"]):
+        directory_paths.append(directory_path)
+
+    match_at = 0
+    for i in range(len(directory_paths)):
+        if os.path.normpath(directory_paths[i]) == os.path.normpath(index["base_directory"]):
+            match_at = i
+
+
+    for i in range(match_at+1,len(directory_paths)):
+        directory_path = directory_paths[i]
+        if directory_path != output_folder:
             generate_directory_index(directory_path,index,index["base_index_name"])
 
     if index["generate_project_index"]:
