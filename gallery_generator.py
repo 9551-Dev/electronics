@@ -160,7 +160,7 @@ def remove_comment(index_content):
 
     return index_content
 
-def generate_directory_index(directory_path, index, index_name):
+def generate_directory_index(directory_path,index,index_name):
     print(f"Generating index for directory: {directory_path}")
 
     index_content = get_index_content(index)
@@ -187,11 +187,11 @@ def generate_directory_index(directory_path, index, index_name):
         file_items.sort()
 
         for item in directory_items:
-            directory_list_content += f"<li><a href=\"{item}/\">{item}/ <sub>[DIR]</sub></a></li>\n"
+            directory_list_content += f"        <li><a href=\"{item}/\">{item}/ <sub>[DIR]</sub></a></li>\n"
         for item in file_items:
-            file_list_content += f"<li><a href=\"{item}\">{item} <sub>[FILE]</sub></a></li>\n"
+            file_list_content += f"        <li><a href=\"{item}\">{item} <sub>[FILE]</sub></a></li>\n"
 
-        directory_list_content += f"<li><a href=\"{index_name}\">{index_name} <sub>[THIS]</sub></a></li>\n"
+        directory_list_content += f"        <li><a href=\"{index_name}\">{index_name} <sub>[THIS]</sub></a></li>\n"
 
         index_content = index_content.replace('{{directory_list}}',directory_list_content+file_list_content)
 
@@ -235,7 +235,6 @@ def generate_directory_indexes(output_folder,output,index):
                 generate_directory_index(current_dir,index,index["project_index_name"])
 
     generate_directory_index(index["base_directory"] or output["output_folder"].split(os.sep)[0],index,index["root_index_name"] or "index.html")
-
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
