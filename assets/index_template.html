@@ -1,90 +1,80 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{header}}</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
+            margin: 20px;
             padding: 0;
             background-color: #222;
             color: #ddd;
-            line-height: 1.6;
-            font-size: 16px;
-        }
-        .container {
-            width: 90%;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 10px;
         }
         h1 {
-            margin-bottom: 10px;
-            color: #ffffff;
-            text-align: center;
-            font-size: 28px;
+            margin-bottom: 20px;
+            font-size: 24px;
         }
         ul {
             list-style-type: none;
             padding: 0;
             margin: 0;
         }
-        .index_file {
+        li {
             margin-bottom: 10px;
             background-color: #333;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-        .index_directory {
-            margin-bottom: 10px;
-            background-color: #555;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-        .index_self {
-            margin-bottom: 10px;
-            background-color: #007bff;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+            font-size: 18px;
         }
         li:hover {
-            transform: translateY(-2px);
+            background-color: #555;
         }
         li a {
             display: block;
-            padding: 10px;
-            border-radius: 4px;
+            padding: 8px;
             text-decoration: none;
-            color: #ddd;
+            color: #007bff;
         }
         li a:hover {
             text-decoration: underline;
         }
-        .back-btn {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 8px 16px;
-            background-color: #007bff;
+
+        .index_self {
+            background-color: #444;
+            color: #999;
+        }
+        .index_directory {
+            background-color: rgb(67, 135, 198);
+            color: #ffffff;
+        }
+        .index_file {
+            background-color: #008b7b;
             color: #fff;
-            border: none;
-            border-radius: 4px;
+        }
+
+        button {
+            background-color: transparent;
+            color: #007bff;
+            border: 1px solid #007bff;
+            padding: 10px 20px;
+            border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            font-size: 18px;
         }
-        .back-btn:hover {
-            background-color: #0056b3;
+
+        button:hover {
+            background-color: #007bff;
+            color: #fff;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>{{title}}</h1>
-        <ul>
+    <h1>{{title}}</h1>
+    <ul>
 {{directory_list}}
-        </ul>
-        {{comment_start}}<button class="back-btn" onclick="location.href='..';">Go Up (zap.devvie.cc{{parent}})</button>{{comment_end}}
-    </div>
+    </ul>
+    {{comment_start}}<button onclick="location.href='..';">.. (zap.devvie.cc{{parent}})</button>{{comment_end}}
 </body>
 </html>
