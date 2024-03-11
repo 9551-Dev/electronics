@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{title}}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #222;
+            color: #ddd;
+        }
+        h1 {
+            margin-bottom: 10px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        li {
+            margin-bottom: 5px;
+            padding: 10px;
+            background-color: #333;
+            border-radius: 5px;
+        }
+        a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{title}}</h1>
+    <ul>
+        {{directory_list}}
+        {{comment_start}}<li><button onclick="location.href='..';">.. (zap.devvie.cc{{parent}})</button></li>{{comment_end}}
+    </ul>
+</body>
+</html>
