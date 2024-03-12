@@ -5,19 +5,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta content="{{embed_title}}" property="og:title" />
-    <meta content="{{embed_description}}" property="og:description" />
-    <meta content="{{embed_url}}" property="og:url" />
-    <meta content="{{embed_image}}" property="og:image" />
-    <meta content="{{embed_color}}" data-react-helmet="true" name="theme-color" />
+    <meta content="ГУ-81М soviet pentode" property="og:title" />
+    <meta content="The GU81M (ГУ-81М) is a pentode that was produced by the soviet military, my sample here was created in 1988" property="og:description" />
+    <meta content="https://discord.gg/Te3KpWWRdY" property="og:url" />
+    <meta content="https://zap.devvie.cc/gal/tubes/gu81m/images/GAL_1.jpg" property="og:image" />
+    <meta content="#f5c570" data-react-helmet="true" name="theme-color" />
 
-    <title>{{title}}</title>
-    <link rel="stylesheet" href="{{css_path}}">
+    <title>GU-81M (ГУ-81М) 500W soviet vacuum tube</title>
+    <link rel="stylesheet" href="core/style.css">
 </head>
 <body class="dark-mode">
     <div class="container">
         <div class="header-box">
-            <h1>{{title}}</h1>
+            <h1>GU-81M (ГУ-81М) 500W soviet vacuum tube</h1>
             <div class="button-container">
                 <button class="header-btn back-button" onclick="location.href='..'">Back</button>
                 <div class="button-wrapper">
@@ -28,7 +28,10 @@
         </div>
         <div class="content">
             <div class="gallery">
-    {{image_tags}}
+                <img src="images/GAL_1.jpg" alt="GAL_1.jpg" onclick='open_image_viewer("images/GAL_1.jpg")'>
+            <img src="images/GAL_2.jpg" alt="GAL_2.jpg" onclick='open_image_viewer("images/GAL_2.jpg")'>
+            <img src="images/GAL_3.jpg" alt="GAL_3.jpg" onclick='open_image_viewer("images/GAL_3.jpg")'>
+            <img src="images/GAL_4.jpg" alt="GAL_4.jpg" onclick='open_image_viewer("images/GAL_4.jpg")'>
             </div>
 
             <div class="image-viewer" onclick="close_image_viewer()">
@@ -50,5 +53,5 @@
         </div>
     </div>
 
-    <script src="{{js_path}}"></script>
+    <script src="core/script.js"></script>
 </body>
