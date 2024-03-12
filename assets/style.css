@@ -15,21 +15,51 @@ body {
     z-index: 1;
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
-.header-box h1 {
-    margin: 0;
+.header-btn-lightmode {
+    background-color: white;
+    color: black;
 }
 
-.header-box button {
+.header-btn-dir {
+    background-color: dodgerblue;
+    color: white;
+}
+
+.back-button {
     background-color: #4CAF50;
     color: white;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-left: auto;
-    margin-right: 30px;
+    margin-right: 5px;
+    margin-top: 2.5px;
+    margin-bottom: 2.5px;
+}
+
+.button-wrapper {
+    margin-right: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.button-wrapper button {
+    width: 100%;
+    border-radius: 3px;
+    min-width: max-content;
+}
+
+
+.button-container {
+    display: flex;
+}
+
+.header-box h1 {
+    margin: 0;
 }
 
 .github-link {
@@ -61,8 +91,10 @@ body.scrolled .header-box {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    position: relative;
     gap: 10px;
 }
+
 img {
     max-width: 100%;
     max-height: 400px;
@@ -72,10 +104,12 @@ img {
     transition: 0.3s;
     cursor: pointer;
 }
+
 img:hover {
     border: 2px solid #777;
     transition: transform 0.3s ease-out;
 }
+
 .image-viewer {
     z-index: 3;
     display: none;
@@ -92,9 +126,10 @@ img:hover {
 .image-viewer img {
     max-width: 90%;
     max-height: 90%;
-    cursor: zoom-in; /* add cursor style for zooming in */
+    cursor: zoom-in;
     transition: transform 0.5s ease-out;
 }
+
 .close-btn {
     font-size: 40px;
     color: white;
@@ -104,6 +139,7 @@ img:hover {
     right: 20px;
     z-index: 1;
 }
+
 .nav-arrows {
     position: fixed;
     top: 50%;
@@ -140,19 +176,6 @@ img:hover {
     left: -20px;
 }
 
-.dark-mode-btn {
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-    font-size: 18px;
-    padding: 5px;
-    background-color: #333;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
 body.dark-mode {
     background-color: #2a2a2a;
     color: #fff;
@@ -177,4 +200,26 @@ body.dark-mode .content {
 
 .viewed-image {
     z-index: 2;
+}
+
+@media only screen and (max-width: 600px) {
+    .header-box {
+        padding: 10px;
+    }
+
+    .header-box h1 {
+        font-size: 1.5rem;
+    }
+
+    .nav-arrows {
+        display: none;
+    }
+
+    .gallery {
+        padding: 10px;
+    }
+
+    img {
+        max-height: 300px;
+    }
 }
