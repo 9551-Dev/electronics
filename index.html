@@ -48,21 +48,26 @@
             100% {color: hsl(0, 100%, 50%);}
         }
 
+        .outer-container {
+            padding: 20px;
+        }
+
         .container {
             text-align: center;
             border: 2px solid #fff;
             padding: 20px;
             border-radius: 10px;
             background-color: rgba(50, 50, 50, 0.8);
+            position: relative;
         }
 
         .container::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: -20px;
+            left: -20px;
+            width: calc(100% + 40px);
+            height: calc(100% + 40px);
             background: linear-gradient(135deg, transparent 0%, transparent 40%, rgba(0, 0, 0, 0.5) 40%, rgba(0, 0, 0, 0.5) 60%, transparent 60%, transparent 100%);
             z-index: -1;
         }
@@ -130,13 +135,15 @@
 </head>
 
 <body>
-    <div class="container">
-        <h1><span class="rainbow-text">9551Dev's</span> Electronics Gallery</h1>
-        <ul>
-            <li><strong><a href="https://github.com/9551-Dev">GitHub</a></strong></li>
-        </ul>
-        <div>
-            <a href="./gal/" class="btn">Browse Gallery</a>
+    <div class="outer-container">
+        <div class="container">
+            <h1><span class="rainbow-text">9551Dev's</span> Electronics Gallery</h1>
+            <ul>
+                <li><strong><a href="https://github.com/9551-Dev" style="color:#4facfe">GitHub</a></strong></li>
+            </ul>
+            <div>
+                <a href="./gal/" class="btn">Browse Gallery</a>
+            </div>
         </div>
     </div>
 </body>
