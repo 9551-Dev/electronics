@@ -37,6 +37,7 @@ def read_config(config_path):
     settings = {
         "title":        config_get_default(config,"Settings","title","Gallery title!"),
         "image_folder": config_get_default(config,"Settings","image_folder","pictures"),
+        "page_title":   config_get_default(config,"Settings","page_title",config_get_default(config,"Settings","title","Gallery title!")),
     }
 
     embed = {
@@ -115,6 +116,7 @@ def generate_html(settings,core,output,embed):
     image_tags         = '\n'.join([f'            <img src={path} alt=\"{os.path.basename(path)} onclick=\'open_image_viewer({path})\'>'
                                     for path in copied_image_paths])
 
+    template_content = template_content.replace("{{page_title}}", settings["page_title"])
     template_content = template_content.replace("{{title}}", settings["title"])
     template_content = template_content.replace("{{css_path}}", os.path.join(output["core_directory_name"], os.path.basename(core["css_path"])))
     template_content = template_content.replace("{{js_path}}",  os.path.join(output["core_directory_name"], os.path.basename(core["js_path"])))
@@ -255,7 +257,7 @@ if __name__ == '__main__':
     config_path = sys.argv[1]
     settings,core,output,index,embed = read_config(config_path)
 
-    print(f'\nTitle: {settings["title"]}')
+    print(f'\nTitle: {settings["page_title"]}')
     print(f'Index files: {index["enabled"] and "enabled" or "disabled"} ({index["enabled"]})')
 
     generate_html(settings,core,output,embed)
