@@ -10,3 +10,6 @@ python3 ./gallery_generator.py config/lab/storage_2024_03_07.ini
 # elektronky
 python3 ./gallery_generator.py config/tubes/gu81m.ini
 python3 ./gallery_generator.py config/tubes/general.ini
+
+# projects
+python3 ./gallery_generator.py config/projects/sstc_v1.ini
