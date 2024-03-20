@@ -11,6 +11,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Generate pages (script runs gallery_generator with python3 for each page)
       run: |
+        pip install markdown
         ./generate.sh
     - name: Move and create extra files for page and github config
       run: |
