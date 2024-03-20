@@ -1,6 +1,7 @@
 import os
 import sys
 import configparser
+import markdown
 import shutil
 
 def check_file_exists(file_path):
@@ -27,6 +28,12 @@ def config_get_default(config,group,value,*default):
         return config.get(group,value)
     else:
         return default[0]
+
+def config_get_section(config, section):
+    if config.has_section(section):
+        return dict(config.items(section))
+    else:
+        return {}
 
 
 def read_config(config_path):
@@ -73,8 +80,17 @@ def read_config(config_path):
         "output_folder":         config_get_default(config,"Output","output_folder","PLS_CONFIGURE_THX_:3"),
         "images_directory_name": config_get_default(config,"Output","images_directory_name","images"),
         "core_directory_name":   config_get_default(config,"Output","core_directory_name","core"),
-        "output_file_name":      config_get_default(config,"Output","output_file_name","index.html")
+        "output_file_name":      config_get_default(config,"Output","output_file_name","index.html"),
+        "image_prefix":          config_get_default(config,"Output","image_prefix","GAL_")
     }
+
+    pagefile = {
+        "enabled":           config_get_default(config,"Pagefile","enabled","false") == "true",
+        "source_file":       config_get_default(config,"Pagefile","source","NONE"),
+        "image_descriptors": config_get_section(config, "Pagefile.descriptions")
+    }
+
+    print(pagefile)
 
     required_files = [settings['image_folder'], core['template_path'], core['css_path'], core['js_path']]
     for file_path in required_files:
@@ -83,7 +99,7 @@ def read_config(config_path):
             exit(1)
 
     print("Configuration read successfully.")
-    return settings,core,output,index,embed
+    return settings,core,output,index,embed,pagefile
 
 def get_image_filenames(image_folder):
     print(f"Scanning image folder: {image_folder}")
@@ -93,7 +109,26 @@ def get_image_filenames(image_folder):
         print(f" - {image_file}")
     return sorted(image_files)
 
-def generate_html(settings,core,output,embed):
+def attach_pagefile(content, output, pagefile):
+    if os.path.exists(pagefile["source_file"]):
+        with open(pagefile["source_file"], 'r') as page_data:
+            markdown_data = page_data.read()
+            print("\nPage text file loaded successfully.")
+    else:
+        print("Page file does not exist.")
+        return content
+
+    print("Generating HTML from markdown and applying macros")
+    generated_markdown = markdown.markdown(markdown_data)
+
+    generated_markdown = generated_markdown.replace("__IMAGE__",os.path.join("./",output["images_directory_name"],output["image_prefix"]))
+
+    content = content.replace("{{markdown}}",generated_markdown)
+    print("Markdown content attached.")
+
+    return content
+
+def generate_html(settings,core,output,embed,pagefile):
     print("\nGenerating HTML...")
     with open(core['template_path'], 'r') as template_file:
         template_content = template_file.read()
@@ -103,14 +138,14 @@ def generate_html(settings,core,output,embed):
         css_content = css_file.read()
 
     image_files = get_image_filenames(settings['image_folder'])
-    image_paths = [os.path.join(output['images_directory_name'], "GAL_" + os.path.basename(image_file)) for image_file in image_files]
+    image_paths = [os.path.join(output['images_directory_name'], output["image_prefix"] + os.path.basename(image_file)) for image_file in image_files]
 
     output_images_folder = os.path.join(output['output_folder'], output['images_directory_name'])
     os.makedirs(output_images_folder, exist_ok=True)
 
     for image_file, image_path in zip(image_files, image_paths):
         print(f"Copying image: {image_file} to {output_images_folder}")
-        shutil.copy(os.path.join(settings['image_folder'], image_file), os.path.join(output_images_folder, "GAL_" + image_file))
+        shutil.copy(os.path.join(settings['image_folder'], image_file), os.path.join(output_images_folder, output["image_prefix"] + image_file))
 
     copied_image_paths = [f'"{path}"' for path in image_paths]
     image_tags         = '\n'.join([f'            <img src={path} alt=\"{os.path.basename(path)} onclick=\'open_image_viewer({path})\'>'
@@ -127,6 +162,13 @@ def generate_html(settings,core,output,embed):
     template_content = template_content.replace("{{embed_url}}",         embed["url"])
     template_content = template_content.replace("{{embed_image}}",       embed["image"])
     template_content = template_content.replace("{{embed_color}}",       embed["color"])
+
+    if pagefile["enabled"]:
+        template_content = attach_pagefile(template_content,output,pagefile)
+        template_content = template_content.replace("{{markdown_container_properties}}","")
+    else:
+        template_content = template_content.replace("{{markdown}}","")
+        template_content = template_content.replace("{{markdown_container_properties}}","style='display: none;'")
 
     image_paths_js = ",\n    ".join(copied_image_paths)
     js_content     = js_content.replace('{{image_paths}}', image_paths_js)
@@ -255,12 +297,13 @@ if __name__ == '__main__':
         exit(1)
 
     config_path = sys.argv[1]
-    settings,core,output,index,embed = read_config(config_path)
+    settings,core,output,index,embed,pagefile = read_config(config_path)
 
     print(f'\nTitle: {settings["page_title"]}')
     print(f'Index files: {index["enabled"] and "enabled" or "disabled"} ({index["enabled"]})')
+    print(f'Markdown pagefile: {pagefile["enabled"] and "enabled" or "disabled"} ({pagefile["enabled"]})')
 
-    generate_html(settings,core,output,embed)
+    generate_html(settings,core,output,embed,pagefile)
 
     if index["enabled"]:
         generate_directory_indexes(output['output_folder'], output, index)

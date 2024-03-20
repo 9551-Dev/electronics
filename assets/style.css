@@ -177,6 +177,7 @@ img:hover {
 }
 
 .nav-arrow-left:before,
+
 .nav-arrow-right:before {
     content: '';
     position: absolute;
@@ -210,6 +211,120 @@ body.dark-mode .content {
 
 .viewed-image {
     z-index: 2;
+}
+
+.markdown-container {
+    max-width: 90%;
+    margin: 5px auto;
+    padding: 10px;
+    background-color: rgba(100,100,100,0.1);
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+}
+
+.markdown-container a,
+.markdown-container a:visited {
+    color: #00c254;
+}
+
+.markdown-container a:hover,
+.markdown-container a:focus,
+.markdown-container a:active {
+    color: #1dcf32;
+}
+
+.markdown-container p {
+    font-size: 1rem;
+    margin-top: 2px;
+    margin-bottom: 0px;
+}
+
+.markdown-container h1,
+.markdown-container h2,
+.markdown-container h3,
+.markdown-container h4 {
+    margin: 1.414rem 0 0.5rem;
+    font-weight: inherit;
+    line-height: 1.42;
+    margin-top: 0px;
+    margin: 3px;
+}
+
+.markdown-container h1 {
+    margin-top: 0;
+    font-size: 3.998rem;
+}
+
+.markdown-container h2 {
+    font-size: 2.827rem;
+}
+
+.markdown-container h3 {
+    font-size: 2rem;
+}
+
+.markdown-container h4 {
+    font-size: 1.414rem;
+}
+
+.markdown-container h5 {
+    font-size: 1.121rem;
+}
+
+.markdown-container h6 {
+    font-size: 0.88rem;
+}
+
+.markdown-container small {
+    font-size: 0.707em;
+}
+
+.markdown-container img,
+.markdown-container canvas,
+.markdown-container iframe,
+.markdown-container video,
+.markdown-container svg,
+.markdown-container select,
+.markdown-container textarea {
+    max-width: 100%;
+}
+
+.markdown-container blockquote {
+border-left: 3px solid #3bfb8e;
+padding-left: 1rem;
+}
+
+.markdown-container + * {
+padding-top: 20px;
+}
+
+.markdown-container code {
+font-family: 'Courier New', Courier, monospace;
+}
+
+.markdown-container p code {
+    background-color: rgba(125,125,125,0.2);
+    color: #fff;
+    padding: 2px 5px;
+    margin-top: 2px;
+    border-radius: 3px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.markdown-container pre {
+    background-color: rgba(0,0,0,0.1);
+    color: rgb(23, 118, 207);
+    padding: 10px;
+    overflow: auto;
+    margin: 1em 0;
+    font-family: 'Courier New', Courier, monospace;
+}
+.markdown-container hr {
+    border: none;
+    height: 4px;
+    background-color: #4CAF50;
+    margin: 30px 0;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 @media only screen and (max-width: 600px) {
