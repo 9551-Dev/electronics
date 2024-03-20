@@ -214,7 +214,7 @@ body.dark-mode .content {
 }
 
 .markdown-container {
-    max-width: 90%;
+    max-width: 95%;
     margin: 5px auto;
     padding: 10px;
     background-color: rgba(100,100,100,0.1);
