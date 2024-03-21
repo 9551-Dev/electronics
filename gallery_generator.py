@@ -107,6 +107,9 @@ class markdown_hyperlink_mixin(InlineProcessor):
         el.set("src", m.group(2))
         el.set("alt", m.group(1))
 
+        print("Image list: " + self.images)
+        print("normpath: " + os.path.normpath(m.group(2)))
+
         if os.path.normpath(m.group(2)) in self.images:
             el.set("onclick", f"open_image_viewer(\"{m.group(2)}\",true)")
 
