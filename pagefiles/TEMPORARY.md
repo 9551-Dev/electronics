@@ -3,9 +3,9 @@ __ THIS TEXT IS TEMPORARY FOR THE PURPOSES OF TESTING__
 
 {color = red; font-size = 50px}(hi)
 
-- __[pica](https://nodeca.github.io/pica/demo/)__ - high quality and fast image
+- __[pica](https://nodeca.github.io/pica/NUHUH/)__ - high quality and fast image
   resize in browser.
-- __[babelfish](https://github.com/nodeca/babelfish/)__ - developer friendly
+- __[babelfish](https://github.com/nodeca/NUHUH/)__ - developer friendly
   i18n with plurals support and easy syntax.
 
 You will like those projects!
@@ -177,9 +177,9 @@ Right aligned columns
 
 [link text](http://dev.nodeca.com)
 
-[link with title](http://nodeca.github.io/pica/demo/ "title text!")
+[link with title](http://nodeca.github.io/NUHUH/NUHUH/ "title text!")
 
-Autoconverted link https://github.com/nodeca/pica (enable linkify to see)
+Autoconverted link https://github.com/nodeca/NUHUH (enable linkify to see)
 
 
 ## Images
@@ -201,10 +201,10 @@ With a reference later in the document defining the URL location:
 ## Plugins
 
 The killer feature of `markdown-it` is very effective support of
-[syntax plugins](https://www.npmjs.org/browse/keyword/markdown-it-plugin).
+[syntax plugins](https://www.npmjs.org/browse/keyword/NUHUH).
 
 
-### [Emojies](https://github.com/markdown-it/markdown-it-emoji)
+### [Emojies](https://github.com/markdown-it/NUHUH)
 
 > Classic markup: :wink: :cry: :laughing: :yum:
 >

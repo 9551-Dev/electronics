@@ -97,7 +97,7 @@ class epic_markdown_extension(Extension):
         CUSTOM_STYLE_PATTERN = r"{(.*?)}\((.*?)\)"
         md.inlinePatterns.register(markdown_custom_style_text(CUSTOM_STYLE_PATTERN,md),"custom_style",175)
 
-class markdown_hypertext_mixin(InlineProcessor):
+class markdown_hyperlink_mixin(InlineProcessor):
     def __init__(self,pattern,md,images):
         super().__init__(pattern,md)
         self.images = images
@@ -107,11 +107,11 @@ class markdown_hypertext_mixin(InlineProcessor):
         el.set("src", m.group(2))
         el.set("alt", m.group(1))
 
-        print("Image list: ",self.images)
-        print("normpath:",m.group(2))
-
         if os.path.normpath(m.group(2)) in self.images:
             el.set("onclick", f"open_image_viewer(\"{m.group(2)}\",true)")
+
+        if m.group(3):
+            el.set("title",m.group(3))
 
         return el,m.start(0),m.end(0)
 
@@ -123,7 +123,7 @@ class markdown_mixin_extension(Extension):
 
     def extendMarkdown(self,md):
         md.inlinePatterns.register(
-            markdown_hypertext_mixin(r'!\[([^\]]*)]\(([^\)]+)\)',md,self.gallery_image_paths),"custom_image_link",175
+            markdown_hyperlink_mixin(r'!\[([^\]]*)]\(([^\)]+)\s"([^"]*)"\)',md,self.gallery_image_paths),"custom_image_link",175
         )
 
 def check_file_exists(file_path):
