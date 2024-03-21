@@ -107,9 +107,6 @@ class markdown_hyperlink_mixin(InlineProcessor):
         el.set("src", m.group(2))
         el.set("alt", m.group(1))
 
-        print("Image list: " + self.images)
-        print("normpath: " + os.path.normpath(m.group(2)))
-
         if os.path.normpath(m.group(2)) in self.images:
             el.set("onclick", f"open_image_viewer(\"{m.group(2)}\",true)")
 
@@ -126,7 +123,7 @@ class markdown_mixin_extension(Extension):
 
     def extendMarkdown(self,md):
         md.inlinePatterns.register(
-            markdown_hyperlink_mixin(r'!\[([^\]]*)]\(([^\)]+)\s"([^"]*)"\)',md,self.gallery_image_paths),"custom_image_link",175
+            markdown_hyperlink_mixin(r'!\[([^\]]*)]\(([^"\)]+)(\s"([^"]*)")?\)',md,self.gallery_image_paths),"custom_image_link",175
         )
 
 def check_file_exists(file_path):
