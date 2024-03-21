@@ -3,24 +3,40 @@ var image_paths = [
     {{image_paths}}
 ];
 
-function open_image_viewer(image_path) {
-    current_image_index = image_paths.indexOf(image_path);
+function normalize_path(file_path) {
+    const parts = file_path.split('/');
+    const normalized_parts = [];
+
+    for (const part of parts) {
+        if (part === '..') {
+            normalized_parts.pop();
+        } else if (part !== '.') {
+            normalized_parts.push(part);
+        }
+    }
+
+    const normalized_path = normalized_parts.join('/');
+
+    if (file_path.startsWith('/')) {
+        return '/' + normalized_path;
+    } else {
+        return normalized_path;
+    }
+}
+
+function open_image_viewer(image_path, prevent_navigation) {
+    current_image_index = image_paths.indexOf(normalize_path(image_path));
     update_image_viewer();
     document.querySelector(".image-viewer").style.display = "flex";
     document.body.style.overflow = "hidden";
 
-    document.addEventListener("keydown", handle_keypress);
+    if (prevent_navigation) {
+        document.querySelector(".nav-arrows").style.display = "none";
+    } else {
+        document.querySelector(".nav-arrows").style.display = "flex";
+    }
 
-    // Add event listener for mouse wheel
-    document.querySelector(".gallery").addEventListener("wheel", function(event) {
-        if (event.deltaY < 0) {
-            // Scrolling up
-            navigate_image(event, -1);
-        } else {
-            // Scrolling down
-            navigate_image(event, 1);
-        }
-    });
+    document.addEventListener("keydown", handle_keypress);
 }
 
 function close_image_viewer() {
@@ -30,7 +46,6 @@ function close_image_viewer() {
     document.body.style.overflow = "auto";
 
     document.removeEventListener("keydown", handle_keypress);
-    document.querySelector(".gallery").removeEventListener("wheel", handle_wheel);
 }
 
 function navigate_image(event, direction) {
@@ -83,14 +98,3 @@ function handle_keypress(event) {
         }
     }
 }
-
-window.addEventListener("scroll", function () {
-    var body = document.body;
-    var scroll_position = window.scrollY;
-
-    if (scroll_position > 0) {
-        body.classList.add("scrolled");
-    } else {
-        body.classList.remove("scrolled");
-    }
-});

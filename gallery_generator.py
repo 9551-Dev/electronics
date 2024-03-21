@@ -4,6 +4,128 @@ import configparser
 import markdown
 import shutil
 
+from markdown.inlinepatterns import InlineProcessor
+from markdown.extensions     import Extension
+import xml.etree.ElementTree as etree
+
+class markdown_strikethrough(InlineProcessor):
+    def handleMatch(self,m,data):
+        el      = etree.Element("del")
+        el.text = m.group(1)
+        return el,m.start(0),m.end(0)
+
+class markdown_superscript(InlineProcessor):
+    def handleMatch(self,m,data):
+        el      = etree.Element("sup")
+        el.text = m.group(1)
+        return el,m.start(0),m.end(0)
+
+class markdown_subscript(InlineProcessor):
+    def handleMatch(self,m,data):
+        el      = etree.Element("sub")
+        el.text = m.group(1)
+        return el,m.start(0),m.end(0)
+
+class markdown_inserted_text(InlineProcessor):
+    def handleMatch(self,m,data):
+        el      = etree.Element("ins")
+        el.text = m.group(1)
+        return el,m.start(0),m.end(0)
+
+class markdown_marked_text(InlineProcessor):
+    def handleMatch(self,m,data):
+        el      = etree.Element("mark")
+        el.text = m.group(1)
+        return el,m.start(0),m.end(0)
+
+class markdown_custon_container(InlineProcessor):
+    def __init__(self,pattern,md):
+        super().__init__(pattern,md)
+
+    def handleMatch(self,m,data):
+        container_type = m.group(1).strip()
+        container_text = m.group(2)
+
+        container = etree.Element("div")
+        container.set("class","custom-container")
+
+        inner_div = etree.SubElement(container,"div")
+        inner_div.set("class",container_type)
+
+        header_text      = etree.Element("p")
+        header_text.text = container_type
+        header_text.set("class","container-header")
+
+        inner_div.append(header_text)
+
+        inner_content      = etree.Element("p")
+        inner_content.text = container_text.strip()
+        inner_div.append(inner_content)
+
+        return container,m.start(0),m.end(0)
+
+class markdown_custom_style_text(InlineProcessor):
+    def handleMatch(self,m,data):
+        styles  = m.group(1).replace("=",":")
+        text    = m.group(2)
+        el      = etree.Element("span")
+        el.text = text
+
+        el.set("style",styles)
+        return el,m.start(0),m.end(0)
+
+class epic_markdown_extension(Extension):
+    def extendMarkdown(self, md):
+        DEL_PATTERN = r"~~(.*?)~~"
+        md.inlinePatterns.register(markdown_strikethrough(DEL_PATTERN,md),"del",175)
+
+        SUP_PATTERN = r"\^(.*?)\^"
+        md.inlinePatterns.register(markdown_superscript(SUP_PATTERN,md),"sup",175)
+
+        SUB_PATTERN = r"~(.*?)~"
+        md.inlinePatterns.register(markdown_subscript(SUB_PATTERN,md),"sub",175)
+
+        INS_PATTERN = r"\+\+(.*?)\+\+"
+        md.inlinePatterns.register(markdown_inserted_text(INS_PATTERN,md),"ins",175)
+
+        MARK_PATTERN = r"==(.*?)=="
+        md.inlinePatterns.register(markdown_marked_text(MARK_PATTERN,md),"mark",175)
+
+        CONTAINER_PATTERN = r":::(\S+)\s(.*?):::"
+        md.inlinePatterns.register(markdown_custon_container(CONTAINER_PATTERN, md),"custom-container",175)
+
+        CUSTOM_STYLE_PATTERN = r"{(.*?)}\((.*?)\)"
+        md.inlinePatterns.register(markdown_custom_style_text(CUSTOM_STYLE_PATTERN,md),"custom_style",175)
+
+class markdown_hypertext_mixin(InlineProcessor):
+    def __init__(self,pattern,md,images):
+        super().__init__(pattern,md)
+        self.images = images
+
+    def handleMatch(self,m,data):
+        el = etree.Element("img")
+        el.set("src", m.group(2))
+        el.set("alt", m.group(1))
+
+        print("Image list: ",self.images)
+        print("normpath:",m.group(2))
+
+        if os.path.normpath(m.group(2)) in self.images:
+            el.set("onclick", f"open_image_viewer(\"{m.group(2)}\",true)")
+
+        return el,m.start(0),m.end(0)
+
+class markdown_mixin_extension(Extension):
+    def __init__(self,local_image_checklist):
+        super().__init__()
+
+        self.gallery_image_paths = local_image_checklist
+
+    def extendMarkdown(self,md):
+        md.inlinePatterns.register(
+            markdown_hypertext_mixin(r'!\[([^\]]*)]\(([^\)]+)\)',md,self.gallery_image_paths),"custom_image_link",175
+        )
+
 def check_file_exists(file_path):
     if not os.path.exists(file_path):
         print(f"Error: File not found: {file_path}")
@@ -34,7 +156,6 @@ def config_get_section(config, section):
         return dict(config.items(section))
     else:
         return {}
-
 
 def read_config(config_path):
     print("Reading configuration...")
@@ -109,7 +230,7 @@ def get_image_filenames(image_folder):
         print(f" - {image_file}")
     return sorted(image_files)
 
-def attach_pagefile(content, output, pagefile):
+def attach_pagefile(content,output,local_image_checklist,pagefile):
     if os.path.exists(pagefile["source_file"]):
         with open(pagefile["source_file"], 'r') as page_data:
             markdown_data = page_data.read()
@@ -119,9 +240,22 @@ def attach_pagefile(content, output, pagefile):
         return content
 
     print("Generating HTML from markdown and applying macros")
-    generated_markdown = markdown.markdown(markdown_data)
 
-    generated_markdown = generated_markdown.replace("__IMAGE__",os.path.join("./",output["images_directory_name"],output["image_prefix"]))
+    markdown_data = markdown_data.replace("__IMAGE__",os.path.join("./",output["images_directory_name"],output["image_prefix"]))
+
+    generated_markdown = markdown.markdown(markdown_data,
+        extensions = [
+            "markdown.extensions.extra",
+            "markdown.extensions.legacy_attrs",
+            "markdown.extensions.admonition",
+            "markdown.extensions.legacy_em",
+            "markdown.extensions.meta",
+            "markdown.extensions.smarty",
+            "markdown.extensions.codehilite",
+            epic_markdown_extension(),
+            markdown_mixin_extension(local_image_checklist)
+        ]
+    )
 
     content = content.replace("{{markdown}}",generated_markdown)
     print("Markdown content attached.")
@@ -147,7 +281,7 @@ def generate_html(settings,core,output,embed,pagefile):
         print(f"Copying image: {image_file} to {output_images_folder}")
         shutil.copy(os.path.join(settings['image_folder'], image_file), os.path.join(output_images_folder, output["image_prefix"] + image_file))
 
-    copied_image_paths = [f'"{path}"' for path in image_paths]
+    copied_image_paths = [f'"{os.path.normpath(path)}"' for path in image_paths]
     image_tags         = '\n'.join([f'            <img src={path} alt=\"{os.path.basename(path)} onclick=\'open_image_viewer({path})\'>'
                                     for path in copied_image_paths])
 
@@ -164,7 +298,9 @@ def generate_html(settings,core,output,embed,pagefile):
     template_content = template_content.replace("{{embed_color}}",       embed["color"])
 
     if pagefile["enabled"]:
-        template_content = attach_pagefile(template_content,output,pagefile)
+        local_image_checklist = [path.strip('"') for path in copied_image_paths]
+
+        template_content = attach_pagefile(template_content,output,local_image_checklist,pagefile)
         template_content = template_content.replace("{{markdown_container_properties}}","")
     else:
         template_content = template_content.replace("{{markdown}}","")
