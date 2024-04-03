@@ -66,16 +66,16 @@ class markdown_custon_container(InlineProcessor):
 
 class markdown_custom_style_text(InlineProcessor):
     def handleMatch(self,m,data):
-        styles = m.group(1).replace("=", ":")
-        text = m.group(2)
-        el = etree.Element("span")
+        styles = m.group(1).replace("=",":")
+        text   = m.group(2)
+        el     = etree.Element("span")
         el.text = text
-        el.set("style", styles)
-        return el, m.start(0), m.end(0)
+        el.set("style",styles)
+        return el,m.start(0),m.end(0)
 
 class markdown_custom_block_style_text(InlineProcessor):
     def handleMatch(self,m,data):
-        styles = m.group(1).replace("=", ":")
+        styles = m.group(1).replace("=",":")
         text = m.group(2)
         el = etree.Element("div")
         el.text = text
@@ -85,7 +85,7 @@ class markdown_custom_block_style_text(InlineProcessor):
 class markdown_url_processor(InlineProcessor):
     def handleMatch(self,m,data):
         url = m.group(0)
-        el = etree.Element("a")
+        el  = etree.Element("a")
         el.text = url
         el.set("href", url)
         return el,m.start(0),m.end(0)
@@ -119,7 +119,6 @@ class epic_markdown_extension(Extension):
         LINK_PATTERN = r'(?<!\!)\b(?:https?|http|ftp|sftp):\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]'
         md.inlinePatterns.register(markdown_url_processor(LINK_PATTERN,md),"embedded_link", 175)
 
-
 class markdown_image_mixin(InlineProcessor):
     def __init__(self,pattern,md,images):
         super().__init__(pattern,md)
@@ -127,8 +126,8 @@ class markdown_image_mixin(InlineProcessor):
 
     def handleMatch(self, m, data):
         el = etree.Element("img")
-        el.set("src", m.group(2))
-        el.set("alt", m.group(1))
+        el.set("src",m.group(2))
+        el.set("alt",m.group(1))
 
         if os.path.normpath(m.group(2)) in self.images:
             el.set("onclick", f"open_image_viewer(\"{m.group(2)}\",true)")
