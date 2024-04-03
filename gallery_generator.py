@@ -66,12 +66,28 @@ class markdown_custon_container(InlineProcessor):
 
 class markdown_custom_style_text(InlineProcessor):
     def handleMatch(self,m,data):
-        styles  = m.group(1).replace("=",":")
-        text    = m.group(2)
-        el      = etree.Element("span")
+        styles = m.group(1).replace("=", ":")
+        text = m.group(2)
+        el = etree.Element("span")
         el.text = text
+        el.set("style", styles)
+        return el, m.start(0), m.end(0)
 
+class markdown_custom_block_style_text(InlineProcessor):
+    def handleMatch(self,m,data):
+        styles = m.group(1).replace("=", ":")
+        text = m.group(2)
+        el = etree.Element("div")
+        el.text = text
         el.set("style",styles)
+        return el,m.start(0),m.end(0)
+
+class markdown_url_processor(InlineProcessor):
+    def handleMatch(self,m,data):
+        url = m.group(0)
+        el = etree.Element("a")
+        el.text = url
+        el.set("href", url)
         return el,m.start(0),m.end(0)
 
 class epic_markdown_extension(Extension):
@@ -92,17 +108,24 @@ class epic_markdown_extension(Extension):
         md.inlinePatterns.register(markdown_marked_text(MARK_PATTERN,md),"mark",175)
 
         CONTAINER_PATTERN = r":::(\S+)\s(.*?):::"
-        md.inlinePatterns.register(markdown_custon_container(CONTAINER_PATTERN, md),"custom-container",175)
+        md.inlinePatterns.register(markdown_custon_container(CONTAINER_PATTERN,md),"custom_container",175)
 
-        CUSTOM_STYLE_PATTERN = r"{(.*?)}\((.*?)\)"
-        md.inlinePatterns.register(markdown_custom_style_text(CUSTOM_STYLE_PATTERN,md),"custom_style",175)
+        CUSTOM_STYLE_PATTERN = r"\[(.*?)\]\[(.*?)\]"
+        md.inlinePatterns.register(markdown_custom_style_text(CUSTOM_STYLE_PATTERN,md),"custom_style",174)
 
-class markdown_hyperlink_mixin(InlineProcessor):
+        CUSTOM_BLOCK_STYLE_PATTERN = r"\[(.*?)\]\{([\s\S]*?)\}"
+        md.inlinePatterns.register(markdown_custom_block_style_text(CUSTOM_BLOCK_STYLE_PATTERN,md),"custom_block_style",175)
+
+        LINK_PATTERN = r'(?<!\!)\b(?:https?|http|ftp|sftp):\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]'
+        md.inlinePatterns.register(markdown_url_processor(LINK_PATTERN,md),"embedded_link", 175)
+
+
+class markdown_image_mixin(InlineProcessor):
     def __init__(self,pattern,md,images):
         super().__init__(pattern,md)
         self.images = images
 
-    def handleMatch(self,m,data):
+    def handleMatch(self, m, data):
         el = etree.Element("img")
         el.set("src", m.group(2))
         el.set("alt", m.group(1))
@@ -111,7 +134,8 @@ class markdown_hyperlink_mixin(InlineProcessor):
             el.set("onclick", f"open_image_viewer(\"{m.group(2)}\",true)")
 
         if m.group(3):
-            el.set("title",m.group(3))
+            title = m.group(3).strip(' "')
+            el.set("title", title)
 
         return el,m.start(0),m.end(0)
 
@@ -123,7 +147,7 @@ class markdown_mixin_extension(Extension):
 
     def extendMarkdown(self,md):
         md.inlinePatterns.register(
-            markdown_hyperlink_mixin(r'!\[([^\]]*)]\(([^"\)]+)(\s"([^"]*)")?\)',md,self.gallery_image_paths),"custom_image_link",175
+            markdown_image_mixin(r'!\[([^\]]*)]\(([^"\)]+)(\s"([^"]*)")?\)',md,self.gallery_image_paths),"custom_image_link",176
         )
 
 def check_file_exists(file_path):
@@ -201,8 +225,7 @@ def read_config(config_path):
         "output_folder":         config_get_default(config,"Output","output_folder","PLS_CONFIGURE_THX_:3"),
         "images_directory_name": config_get_default(config,"Output","images_directory_name","images"),
         "core_directory_name":   config_get_default(config,"Output","core_directory_name","core"),
-        "output_file_name":      config_get_default(config,"Output","output_file_name","index.html"),
-        "image_prefix":          config_get_default(config,"Output","image_prefix","GAL_")
+        "output_file_name":      config_get_default(config,"Output","output_file_name","index.html")
     }
 
     pagefile = {
@@ -210,8 +233,6 @@ def read_config(config_path):
         "source_file":       config_get_default(config,"Pagefile","source","NONE"),
         "image_descriptors": config_get_section(config, "Pagefile.descriptions")
     }
-
-    print(pagefile)
 
     required_files = [settings['image_folder'], core['template_path'], core['css_path'], core['js_path']]
     for file_path in required_files:
@@ -221,14 +242,6 @@ def read_config(config_path):
 
     print("Configuration read successfully.")
     return settings,core,output,index,embed,pagefile
-
-def get_image_filenames(image_folder):
-    print(f"Scanning image folder: {image_folder}")
-    image_files = [f for f in os.listdir(image_folder) if f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp'))]
-    print(f"Found {len(image_files)} image(s):")
-    for image_file in image_files:
-        print(f" - {image_file}")
-    return sorted(image_files)
 
 def attach_pagefile(content,output,local_image_checklist,pagefile):
     if os.path.exists(pagefile["source_file"]):
@@ -241,7 +254,7 @@ def attach_pagefile(content,output,local_image_checklist,pagefile):
 
     print("Generating HTML from markdown and applying macros")
 
-    markdown_data = markdown_data.replace("__IMAGE__",os.path.join("./",output["images_directory_name"],output["image_prefix"]))
+    markdown_data = markdown_data.replace("__IMAGE__",os.path.join("./",output["images_directory_name"]))
 
     generated_markdown = markdown.markdown(markdown_data,
         extensions = [
@@ -262,7 +275,15 @@ def attach_pagefile(content,output,local_image_checklist,pagefile):
 
     return content
 
-def generate_html(settings,core,output,embed,pagefile):
+def get_image_filenames(image_folder):
+    image_files = []
+    for root, dirs, files in os.walk(image_folder):
+        for file in files:
+            if file.endswith(('.png', '.jpg', '.jpeg', '.gif')):
+                image_files.append(os.path.join(root, file))
+    return image_files
+
+def generate_html(settings, core, output, embed, pagefile):
     print("\nGenerating HTML...")
     with open(core['template_path'], 'r') as template_file:
         template_content = template_file.read()
@@ -271,19 +292,64 @@ def generate_html(settings,core,output,embed,pagefile):
     with open(core['css_path'], 'r') as css_file:
         css_content = css_file.read()
 
+    # get all recursive mages in image_folder
     image_files = get_image_filenames(settings['image_folder'])
-    image_paths = [os.path.join(output['images_directory_name'], output["image_prefix"] + os.path.basename(image_file)) for image_file in image_files]
+    image_groups = {}
+    for image_file in image_files:
+        directory = os.path.dirname(image_file)
+        if directory not in image_groups:
+            image_groups[directory] = []
+            print("Found image group " + directory)
+
+        image_groups[directory].append(image_file)
 
     output_images_folder = os.path.join(output['output_folder'], output['images_directory_name'])
     os.makedirs(output_images_folder, exist_ok=True)
+    print("output images folder: " + output_images_folder)
 
-    for image_file, image_path in zip(image_files, image_paths):
-        print(f"Copying image: {image_file} to {output_images_folder}")
-        shutil.copy(os.path.join(settings['image_folder'], image_file), os.path.join(output_images_folder, output["image_prefix"] + image_file))
+    # What the fuck is happening here oh my god i hated implementing groups, this is a clusterfuck
+    for group, images in image_groups.items():
+        if group != settings['image_folder']:
+            group_name = os.path.basename(group)
+        else:
+            group_name = ""
 
-    copied_image_paths = [f'"{os.path.normpath(path)}"' for path in image_paths]
-    image_tags         = '\n'.join([f'            <img src={path} alt=\"{os.path.basename(path)} onclick=\'open_image_viewer({path})\'>'
+        print(f"Creating image group: {group_name}")
+
+        for image_file in images:
+
+            # like actually kill me already
+            relative_path = os.path.relpath(image_file,start=settings['image_folder'])
+            output_folder = os.path.join(output_images_folder, os.path.dirname(relative_path))
+            os.makedirs(output_folder, exist_ok=True)
+
+            output_image_file = os.path.join(output_folder, os.path.basename(image_file))
+
+            print(f"Copying image: {image_file} to {output_image_file}")
+
+            shutil.copy2(image_file, output_image_file)
+
+    image_tags = ""
+    make_header = None
+    for group, images in image_groups.items():
+        make_header = group != settings['image_folder']
+        if make_header:
+            group_name = os.path.basename(group)
+        else:
+            group_name = ""
+
+        # cancer juice
+        relative_path = os.path.relpath(group,start=settings['image_folder'])
+
+        copied_image_paths = [os.path.join(output["images_directory_name"], relative_path, os.path.basename(path)) for path in images]
+        group_image_tags = '\n'.join([f'            <img src="{path}" alt="{os.path.basename(path)}" onclick="open_image_viewer(\'{path}\')">'
                                     for path in copied_image_paths])
+
+        if make_header:
+            image_tags += f"<h2 class='image-group-header'>{group_name}</h2>\n" + group_image_tags
+        else:
+            image_tags += group_image_tags
+
 
     template_content = template_content.replace("{{page_title}}", settings["page_title"])
     template_content = template_content.replace("{{title}}", settings["title"])
@@ -298,16 +364,21 @@ def generate_html(settings,core,output,embed,pagefile):
     template_content = template_content.replace("{{embed_color}}",       embed["color"])
 
     if pagefile["enabled"]:
-        local_image_checklist = [path.strip('"') for path in copied_image_paths]
-
-        template_content = attach_pagefile(template_content,output,local_image_checklist,pagefile)
+        local_image_checklist = [os.path.join(output["images_directory_name"], os.path.basename(group), os.path.basename(path)) for group, images in image_groups.items() for path in images]
+        template_content = attach_pagefile(template_content, output, local_image_checklist, pagefile)
         template_content = template_content.replace("{{markdown_container_properties}}","")
     else:
         template_content = template_content.replace("{{markdown}}","")
         template_content = template_content.replace("{{markdown_container_properties}}","style='display: none;'")
 
-    image_paths_js = ",\n    ".join(copied_image_paths)
-    js_content     = js_content.replace('{{image_paths}}', image_paths_js)
+
+    image_paths_js = ",\n    ".join([
+        f'"{os.path.join(output["images_directory_name"], "" if group == settings["image_folder"] else os.path.relpath(group, start=settings["image_folder"]), os.path.basename(path))}"'
+        for group, images in image_groups.items()
+        for path in images
+    ])
+
+    js_content = js_content.replace('{{image_paths}}', image_paths_js)
 
     output_core_folder = os.path.join(output['output_folder'], output['core_directory_name'])
     os.makedirs(output_core_folder, exist_ok=True)
