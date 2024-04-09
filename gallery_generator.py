@@ -124,7 +124,7 @@ class markdown_image_mixin(InlineProcessor):
         super().__init__(pattern,md)
         self.images = images
 
-    def handleMatch(self, m, data):
+    def handleMatch(self,m,data):
         el = etree.Element("img")
         el.set("src",m.group(2))
         el.set("alt",m.group(1))
@@ -363,8 +363,17 @@ def generate_html(settings, core, output, embed, pagefile):
     template_content = template_content.replace("{{embed_color}}",       embed["color"])
 
     if pagefile["enabled"]:
-        local_image_checklist = [os.path.join(output["images_directory_name"], os.path.basename(group), os.path.basename(path)) for group, images in image_groups.items() for path in images]
-        template_content = attach_pagefile(template_content, output, local_image_checklist, pagefile)
+        local_image_checklist = [
+            os.path.join(output["images_directory_name"],"" if group == settings["image_folder"] else os.path.basename(group),os.path.basename(path))
+            for group, images in image_groups.items()
+            for path in images
+            # Man wtf
+            if (
+                True if group != settings["image_folder"] else True # make root group not have a group name
+            )
+        ]
+
+        template_content = attach_pagefile(template_content,output,local_image_checklist,pagefile)
         template_content = template_content.replace("{{markdown_container_properties}}","")
     else:
         template_content = template_content.replace("{{markdown}}","")
