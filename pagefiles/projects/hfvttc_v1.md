@@ -30,7 +30,7 @@ The issue here is that i only run this circuit at about 80V (because the HV part
 ---
 
 For another change i also used a different capacitor in the feedback which is only about 5kV and its capacity is way too large
-this should not be much of an issue unless i short out the jarlid:tm: capacitor while running at high powers, but i do plan to replace it
+this should not be much of an issue unless i short out the jarlid^tm^ capacitor while running at high powers, but i do plan to replace it
 
 I also think that i should up the number of turns on the L1 (first) inductor, as that seems to have worked better for others
 
@@ -57,7 +57,7 @@ And here it is placed right next to the *"antenna"* where you can see some of th
 
 [color = orange][This causes lots of interference, a radio far away across the house is unusable][color = red][!]
 
-Hopefully i can get some more arcs (over several cm) out of this circuits soon:tm: and post some updates here.
+Hopefully i can get some more arcs (over several cm) out of this circuits soon^tm^ and post some updates here.
 
 ---
 ### sidenote
