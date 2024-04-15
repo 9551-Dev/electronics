@@ -39,18 +39,30 @@ function open_image_viewer(image_path, prevent_navigation) {
     document.addEventListener("keydown", handle_keypress);
 }
 
+function instant_scaledown(element) {
+    var original_transition  = element.style.transition;
+    element.style.transition = "transform 0s";
+    element.style.transform  = "scale(1)";
+    setTimeout(()=>{
+        element.style.transition = original_transition;
+    },0);
+}
+
 function close_image_viewer() {
     var img = document.getElementById("viewer-image");
-    img.style.transform = "scale(1)";
+    instant_scaledown(img);
+
     document.querySelector(".image-viewer").style.display = "none";
     document.body.style.overflow = "auto";
 
     document.removeEventListener("keydown", handle_keypress);
 }
 
-function navigate_image(event, direction) {
+function navigate_image(event,direction) {
     var img = document.getElementById("viewer-image");
-    img.style.transform = "scale(1)";
+
+    instant_scaledown(img);
+
     event.stopPropagation();
     current_image_index += direction;
     if (current_image_index < 0) {
@@ -70,15 +82,27 @@ function toggle_dark_mode() {
     body.classList.toggle("dark-mode");
 }
 
-function zoom_image(event) {
+var last_zoom_x = 0;
+var last_zoom_y = 0;
+
+function zoom_image(event,instant) {
     var img = document.getElementById("viewer-image");
     var bounding_rect = img.getBoundingClientRect();
 
     var x = (event.clientX - bounding_rect.left) / bounding_rect.width;
-    var y = (event.clientY - bounding_rect.top) / bounding_rect.height;
+    var y = (event.clientY - bounding_rect.top)  / bounding_rect.height;
 
-    img.style.transformOrigin = `${x * 100}% ${y * 100}%`;
-    img.style.transform = img.style.transform === "scale(2)" ? "scale(1)" : "scale(2)";
+    if (img.style.transform === "scale(2)") {
+        x = last_zoom_x;
+        y = last_zoom_y;
+        img.style.transformOrigin = `${x*100}% ${y*100}%`;
+        img.style.transform = "scale(1)";
+    } else {
+        img.style.transformOrigin = `${x*100}% ${y*100}%`;
+        img.style.transform = "scale(2)";
+        last_zoom_x = x;
+        last_zoom_y = y;
+    }
 
     event.stopPropagation();
 }
