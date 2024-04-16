@@ -14,3 +14,6 @@ python3 ./gallery_generator.py config/tubes/general.ini
 # projects
 python3 ./gallery_generator.py config/projects/sstc_v1.ini
 python3 ./gallery_generator.py config/projects/hfvttc_v1.ini
+
+# misc
+python3 ./gallery_generator.py config/misc/pat_a_mat.ini
