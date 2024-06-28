@@ -168,11 +168,16 @@ def remove_base_dir(index, path):
     else:
         return path
 
-def config_get_default(config,group,value,*default):
+def config_get_default(config,parent_config,group,value,*default):
     if config.has_option(group,value):
         return config.get(group,value)
-    else:
+    elif hasattr(parent_config,"has_option") and parent_config.has_option(group,value):
+        return parent_config.get(group,value)
+    elif default:
         return default[0]
+    else:
+        raise ValueError(f"Default value not provided for {group}.{value}")
+
 
 def config_get_section(config, section):
     if config.has_section(section):
@@ -180,58 +185,66 @@ def config_get_section(config, section):
     else:
         return {}
 
-def read_config(config_path):
+def read_config(config_path,*parent_config_path):
     print("Reading configuration...")
-    config = configparser.ConfigParser()
+    config        = configparser.ConfigParser()
+    parent_config = configparser.ConfigParser()
+
     config.read(config_path)
+    if parent_config_path[0]:
+        if os.path.exists(parent_config_path[0]):
+            parent_config.read(parent_config_path[0])
+            print(f"Parent config file {parent_config_path[0]} found and loaded.")
+        else:
+            print(f"Parent config file {parent_config_path[0]} not found.")
 
     settings = {
-        "title":        config_get_default(config,"Settings","title","Gallery title!"),
-        "image_folder": config_get_default(config,"Settings","image_folder","pictures"),
-        "page_title":   config_get_default(config,"Settings","page_title",config_get_default(config,"Settings","title","Gallery title!")),
+        "title":        config_get_default(config,parent_config,"Settings","title","Gallery title!"),
+        "image_folder": config_get_default(config,parent_config,"Settings","image_folder","pictures"),
+        "page_title":   config_get_default(config,parent_config,"Settings","page_title",config_get_default(config,parent_config,"Settings","title","Gallery title!")),
     }
 
     embed = {
-        "enabled"    : config_get_default(config,"Embed","enabled","false") == "true",
-        "title"      : config_get_default(config,"Embed","title","An image gallery"),
-        "description": config_get_default(config,"Embed","description","A very filled image gallery with images"),
-        "image"      : config_get_default(config,"Embed","image","https://github.com/9551-Dev.png"),
-        "color"      : config_get_default(config,"Embed","color","#90f91f"),
-        "url"        : config_get_default(config,"Embed","url","https://github.com/9551-Dev")
+        "enabled"    : config_get_default(config,parent_config,"Embed","enabled","false") == "true",
+        "title"      : config_get_default(config,parent_config,"Embed","title","An image gallery"),
+        "description": config_get_default(config,parent_config,"Embed","description","A very filled image gallery with images"),
+        "image"      : config_get_default(config,parent_config,"Embed","image","https://github.com/9551-Dev.png"),
+        "color"      : config_get_default(config,parent_config,"Embed","color","#90f91f"),
+        "url"        : config_get_default(config,parent_config,"Embed","url","https://github.com/9551-Dev")
     }
 
     index = {
-        "index_style":     config_get_default(config,"Index","page","assets/index_template.html"),
-        "enabled":         config_get_default(config,"Index","enabled","true") == "true",
-        "base_directory":  config_get_default(config,"Index","base_directory","docs"),
-        "base_index_name": config_get_default(config,"Index","base_index_name","index.html"),
+        "index_style":     config_get_default(config,parent_config,"Index","page","assets/index_template.html"),
+        "enabled":         config_get_default(config,parent_config,"Index","enabled","true") == "true",
+        "base_directory":  config_get_default(config,parent_config,"Index","base_directory","docs"),
+        "base_index_name": config_get_default(config,parent_config,"Index","base_index_name","index.html"),
 
-        "generate_project_index":      config_get_default(config,"Index.special_rules","generate_project_index","false"),
-        "generate_project_root_index": config_get_default(config,"Index.special_rules","generate_project_root_index","false"),
-        "project_index_name":          config_get_default(config,"Index.special_rules","project_index_name","index.html"),
-        "project_root_index_name":     config_get_default(config,"Index.special_rules","project_root_index_name","dir.html"),
+        "generate_project_index":      config_get_default(config,parent_config,"Index.special_rules","generate_project_index","false"),
+        "generate_project_root_index": config_get_default(config,parent_config,"Index.special_rules","generate_project_root_index","false"),
+        "project_index_name":          config_get_default(config,parent_config,"Index.special_rules","project_index_name","index.html"),
+        "project_root_index_name":     config_get_default(config,parent_config,"Index.special_rules","project_root_index_name","dir.html"),
 
-        "root_index_name":  config_get_default(config,"Index.special_rules","root_index_name","root_index.html"),
-        "root_index_super": config_get_default(config,"Index.special_rules","root_index_super","UNUSED"),
+        "root_index_name":  config_get_default(config,parent_config,"Index.special_rules","root_index_name","root_index.html"),
+        "root_index_super": config_get_default(config,parent_config,"Index.special_rules","root_index_super","UNUSED"),
     }
 
     core = {
-        "template_path": config_get_default(config,"Core","template_path"),
-        "css_path":      config_get_default(config,"Core","css_path"),
-        "js_path":       config_get_default(config,"Core","js_path")
+        "template_path": config_get_default(config,parent_config,"Core","template_path"),
+        "css_path":      config_get_default(config,parent_config,"Core","css_path"),
+        "js_path":       config_get_default(config,parent_config,"Core","js_path")
     }
 
     output = {
-        "output_folder":         config_get_default(config,"Output","output_folder","PLS_CONFIGURE_THX_:3"),
-        "images_directory_name": config_get_default(config,"Output","images_directory_name","images"),
-        "core_directory_name":   config_get_default(config,"Output","core_directory_name","core"),
-        "output_file_name":      config_get_default(config,"Output","output_file_name","index.html")
+        "output_folder":         config_get_default(config,parent_config,"Output","output_folder","PLS_CONFIGURE_THX_:3"),
+        "images_directory_name": config_get_default(config,parent_config,"Output","images_directory_name","images"),
+        "core_directory_name":   config_get_default(config,parent_config,"Output","core_directory_name","core"),
+        "output_file_name":      config_get_default(config,parent_config,"Output","output_file_name","index.html")
     }
 
     pagefile = {
-        "enabled":           config_get_default(config,"Pagefile","enabled","false") == "true",
-        "source_file":       config_get_default(config,"Pagefile","source","NONE"),
-        "image_descriptors": config_get_section(config, "Pagefile.descriptions")
+        "enabled":           config_get_default(config,parent_config,"Pagefile","enabled","false") == "true",
+        "source_file":       config_get_default(config,parent_config,"Pagefile","source","NONE"),
+        "image_descriptors": config_get_section(config,"Pagefile.descriptions")
     }
 
     required_files = [settings['image_folder'], core['template_path'], core['css_path'], core['js_path']]
@@ -509,12 +522,18 @@ def generate_directory_indexes(output_folder,output,index):
     generate_directory_index(index["base_directory"] or output["output_folder"].split(os.sep)[0],index,index["root_index_name"] or "index.html")
 
 if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        print("Usage: python script.py [config_path]")
+    if len(sys.argv) < 2:
+        print("Usage: python script.py <config_path/parent_config_path> [config_path_sub]")
         exit(1)
 
-    config_path = sys.argv[1]
-    settings,core,output,index,embed,pagefile = read_config(config_path)
+    parent_config_path = None
+    config_path        = sys.argv[1]
+
+    if len(sys.argv) >= 3:
+        parent_config_path = sys.argv[1]
+        config_path        = sys.argv[2]
+
+    settings,core,output,index,embed,pagefile = read_config(config_path,parent_config_path)
 
     print(f'\nTitle: {settings["page_title"]}')
     print(f'Index files: {index["enabled"] and "enabled" or "disabled"} ({index["enabled"]})')
