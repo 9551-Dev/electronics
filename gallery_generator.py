@@ -192,6 +192,7 @@ def read_config(config_path):
     }
 
     embed = {
+        "enabled"    : config_get_default(config,"Embed","enabled","false") == "true",
         "title"      : config_get_default(config,"Embed","title","An image gallery"),
         "description": config_get_default(config,"Embed","description","A very filled image gallery with images"),
         "image"      : config_get_default(config,"Embed","image","https://github.com/9551-Dev.png"),
@@ -274,6 +275,12 @@ def attach_pagefile(content,output,local_image_checklist,pagefile):
 
     return content
 
+def set_comment(content,state,comment_type):
+    content = content.replace(f"{{{{{comment_type}_start}}}}", "<!--" if state else "")
+    content = content.replace(f"{{{{{comment_type}_end}}}}",   "-->"  if state else "")
+
+    return content
+
 def get_image_filenames(image_folder):
     image_files = []
     for root, dirs, files in os.walk(image_folder):
@@ -350,6 +357,8 @@ def generate_html(settings, core, output, embed, pagefile):
             image_tags += group_image_tags
 
 
+    template_content = set_comment(template_content,not embed["enabled"],"embed_enable")
+
     template_content = template_content.replace("{{page_title}}", settings["page_title"])
     template_content = template_content.replace("{{title}}", settings["title"])
     template_content = template_content.replace("{{css_path}}", os.path.join(output["core_directory_name"], os.path.basename(core["css_path"])))
@@ -414,12 +423,6 @@ def get_index_content(index):
             print(f"Error: Index HTML file not found at {index['index_style']}.")
     return None
 
-def remove_comment(index_content):
-    index_content = index_content.replace("{{comment_start}}","")
-    index_content = index_content.replace("{{comment_end}}",  "")
-
-    return index_content
-
 def generate_directory_index(directory_path,index,index_name):
     print(f"Generating index for directory: {directory_path}")
 
@@ -455,17 +458,16 @@ def generate_directory_index(directory_path,index,index_name):
         index_content = index_content.replace('{{directory_list}}',directory_list_content)
 
         if os.path.normpath(directory_path) == os.path.normpath(index["base_directory"]):
-            index_content = index_content.replace("{{comment_start}}","<!--")
-            index_content = index_content.replace("{{comment_end}}",  "-->")
+            index_content = set_comment(index_content,True,"comment")
         elif os.path.dirname(remove_base_dir(index,directory_path)) == "":
             index_content = index_content.replace('{{parent}}',"")
-            index_content = remove_comment(index_content)
+            index_content = set_comment(index_content,False,"comment")
         elif (directory_path.split(os.sep)[0] == index["base_directory"]) and (os.path.normpath(directory_path) != os.path.normpath(index["base_directory"])):
             index_content = index_content.replace('{{parent}}',f"/{os.path.dirname(remove_base_dir(index,directory_path))}/")
-            index_content = remove_comment(index_content)
+            index_content = set_comment(index_content,False,"comment")
         else:
             index_content = index_content.replace('{{parent}}',f"{os.path.dirname(directory_path)}")
-            index_content = remove_comment(index_content)
+            index_content = set_comment(index_content,False,"comment")
 
         with open(os.path.join(directory_path,index_name), 'w') as index_file:
             index_file.write(index_content)
