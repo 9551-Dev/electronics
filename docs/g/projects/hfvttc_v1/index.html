@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+
+    
+    <meta content="HFVTTC V1" property="og:title" />
+    <meta content="Finally getting around to building some sort of a vacuum tube tesla coil" property="og:description" />
+    <meta content="https://zap.devvie.cc/g/projects/hfvttc_v1" property="og:url" />
+    <meta content="https://zap.devvie.cc/g/projects/hfvttc_v1/images/output_4.jpg" property="og:image" />
+    <meta content="#ff8156" data-react-helmet="true" name="theme-color" />
+    
+
+    <title>HFVTTC V1</title>
+    <link rel="stylesheet" href="core/style.css">
+</head>
+<body class="dark-mode">
+    <div class="container">
+        <div class="header-box">
+            <h1>HFVTTC <span style='color:DodgerBlue'>V1</span></h1>
+            <div class="button-container">
+                <button class="header-btn back-button" onclick="location.href='..'">Back</button>
+                <div class="button-wrapper">
+                    <button class="header-btn-lightmode" onclick="toggle_dark_mode()">Toggle Light Mode</button>
+                    <button class="header-btn-dir" onclick="location.href='./dir.html'">View directory</button>
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            <div class="markdown-container" >
+    <p>
+<div style="font-size : 1.4em">
+Despite collecting tons of tubes,
+I haven&rsquo;t done much with them other than small experiments
+</div>
+</p>
+<p>So I have finally decided to build some sort of a Tesla coil, starting with an HFVTTC.</p>
+<p>Whether or not this was a good starting point, I have no idea, but the schematic is rather straightforward.</p>
+<p>My design was based on this one by uzzors2k:</p>
+<p><img alt="Epic toob schematic" onclick="open_image_viewer(&quot;./images/schematic/uzzors2k_hfvttc.png&quot;,true)" src="./images/schematic/uzzors2k_hfvttc.png" />
+<img alt="showcase of my build" onclick="open_image_viewer(&quot;./images/general_4.jpg&quot;,true)" src="./images/general_4.jpg" />
+<img alt="showcase of my build the second" onclick="open_image_viewer(&quot;./images/general_9.jpg&quot;,true)" src="./images/general_9.jpg" /></p>
+<hr />
+<p>The difference was mainly that I used a different tube, and handled the g2 power differently.</p>
+<p>I am for now using <strong>GU50 Soviet pentode</strong>, while he used a way more powerful GK-71.</p>
+<p>As for the G2 supply, I am currently using rectified mains (filtered) which is put across g2 and the cathode instead of a large resistor which just connects G2 anode potential.</p>
+<p><img alt="g2 power supply" onclick="open_image_viewer(&quot;./images/supply_1.jpg&quot;,true)" src="./images/supply_1.jpg" /></p>
+<p>This leads to a low G2 voltage of only about 110V. I plan to fix this by using a CW voltage multiplier in the future.</p>
+<p><strong>Note:</strong> In a further iteration, this was no longer an issue since the circuit was driven with way higher voltage anyway.</p>
+<hr />
+<p>For another change, I also used a different capacitor in the feedback which is only about 5kV and its capacity is way too large. This should not be much of an issue unless I short out the jar lid™ capacitor while running at high powers, but I do plan to replace it.</p>
+<p>I also think that I should up the number of turns on the L1 (first) inductor, as that seems to have worked better for others.</p>
+<p><img alt="feedback ceramic capacitor with a jar lid attached" onclick="open_image_viewer(&quot;./images/feedback_2.jpg&quot;,true)" src="./images/feedback_2.jpg" />
+<img alt="feedback setup" onclick="open_image_viewer(&quot;./images/feedback_1.jpg&quot;,true)" src="./images/feedback_1.jpg" /></p>
+<h3>Updates<sup id="fnref:updates"><a class="footnote-ref" href="#fn:updates">1</a></sup></h3>
+<p>Both the resonator coil and the choke have been rewound:</p>
+<ul>
+<li>Resonator: ~23 turns</li>
+<li>Choke: ??? I don&rsquo;t know, I eyeballed it.</li>
+</ul>
+<p>I have also split them off so they are no longer on the same coil form. I specifically 3D printed a 5cm wide 7cm high form for the choke.</p>
+<p><img alt="new resonator setup" onclick="open_image_viewer(&quot;./images/resonator_3.jpg&quot;,true)" src="./images/resonator_3.jpg" />
+<img alt="new resonator setup" onclick="open_image_viewer(&quot;./images/general_10.jpg&quot;,true)" src="./images/general_10.jpg" /></p>
+<p>I have also pushed way higher voltage into the setup which helped the initial arc to stay ignited.</p>
+<h2>Some Results</h2>
+<p><del>For now, I haven&rsquo;t been able to get much, but I plan to improve the output with the aforementioned ideas.</del> Resolved in the section above.</p>
+<p>Here are some arcs produced by this setup, from what I&rsquo;d guess they are maybe 10cm+ at best and the tube only starts redplating at very high powers. Since this run I somehow managed to &ldquo;kill&rdquo; the setup, it still works but the arc doesn&rsquo;t grow as much with the voltage.</p>
+<p>I will probably try rebuilding it for it to be a bit cleaner and handle the high voltages a bit better, but for now I&rsquo;m a bit clueless about what happened since the setup didn&rsquo;t change at all. I am still quite happy with the results I was able to get. <a href="https://www.youtube.com/shorts/fzB8J2L6n1E">Here is a video of the coil running</a></p>
+<p><img alt="small arc" onclick="open_image_viewer(&quot;./images/output_3.jpg&quot;,true)" src="./images/output_3.jpg" />
+<img alt="big boy arc" onclick="open_image_viewer(&quot;./images/output_4.jpg&quot;,true)" src="./images/output_4.jpg" /></p>
+<p>I was also able to get some neat images of what is seemingly a neon bulb being excited in an interesting way.</p>
+<p>Despite being filled with neon (for the most part) giving a deep orange color in the EMF of my standard SSTC, it gives off a blue glow here. This could be caused by some mixed-in argon or mercury vapor (no droplets seem to be forming inside the glass).</p>
+<p>Here&rsquo;s a picture with the tube being somewhat spaced from the &ldquo;antenna&rdquo;:</p>
+<p><img alt="blue glowing bulb" onclick="open_image_viewer(&quot;./images/output_1.png&quot;,true)" src="./images/output_1.png" /></p>
+<p>And here it is placed right next to the &ldquo;antenna&rdquo; where you can see some of the neon orange starting to show at the contact point:</p>
+<p><img alt="blue glowing bulb" onclick="open_image_viewer(&quot;./images/output_2.png&quot;,true)" src="./images/output_2.png" /></p>
+<hr />
+<p><span style="color : orange">This causes lots of interference; a radio far away across the house is unusable.</span><span style="color : red">!</span></p>
+<p>Hopefully, I can get some more arcs (over several cm) out of this circuit soon™ and post some updates here.</p>
+<hr />
+<h3>Sidenote</h3>
+<p>A fun way to start a project is to realize some of your components are unusable.</p>
+<p>For me, I found out one of my MOT has died and that my microwave diode is dead as well.</p>
+<p>This led me to make an abomination of a diode (which somehow didn&rsquo;t explode yet) out of 1N4007 diodes.</p>
+<p>As for the MOT, I just used a different one after realizing trying to save it is futile.</p>
+<p><img alt="diode replacement zoomed out" onclick="open_image_viewer(&quot;./images/supply_4.jpg&quot;,true)" src="./images/supply_4.jpg" />
+<img alt="diode replacement" onclick="open_image_viewer(&quot;./images/supply_5.jpg&quot;,true)" src="./images/supply_5.jpg" />
+<img alt="RIP MOT" onclick="open_image_viewer(&quot;./images/supply_3.jpg&quot;,true)" src="./images/supply_3.jpg" /></p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:updates">
+<p>Updates&#160;<a class="footnote-backref" href="#fnref:updates" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+            </div>
+            <div class="gallery">
+                <img src="images/./output_2.png" alt="output_2.png" onclick="open_image_viewer('images/./output_2.png')">
+            <img src="images/./tube_1.jpg" alt="tube_1.jpg" onclick="open_image_viewer('images/./tube_1.jpg')">
+            <img src="images/./supply_1.jpg" alt="supply_1.jpg" onclick="open_image_viewer('images/./supply_1.jpg')">
+            <img src="images/./supply_3.jpg" alt="supply_3.jpg" onclick="open_image_viewer('images/./supply_3.jpg')">
+            <img src="images/./feedback_2.jpg" alt="feedback_2.jpg" onclick="open_image_viewer('images/./feedback_2.jpg')">
+            <img src="images/./output_4.jpg" alt="output_4.jpg" onclick="open_image_viewer('images/./output_4.jpg')">
+            <img src="images/./resonator_2.jpg" alt="resonator_2.jpg" onclick="open_image_viewer('images/./resonator_2.jpg')">
+            <img src="images/./supply_2.jpg" alt="supply_2.jpg" onclick="open_image_viewer('images/./supply_2.jpg')">
+            <img src="images/./general_4.jpg" alt="general_4.jpg" onclick="open_image_viewer('images/./general_4.jpg')">
+            <img src="images/./resonator_3.jpg" alt="resonator_3.jpg" onclick="open_image_viewer('images/./resonator_3.jpg')">
+            <img src="images/./output_1.png" alt="output_1.png" onclick="open_image_viewer('images/./output_1.png')">
+            <img src="images/./general_8.jpg" alt="general_8.jpg" onclick="open_image_viewer('images/./general_8.jpg')">
+            <img src="images/./supply_4.jpg" alt="supply_4.jpg" onclick="open_image_viewer('images/./supply_4.jpg')">
+            <img src="images/./general_9.jpg" alt="general_9.jpg" onclick="open_image_viewer('images/./general_9.jpg')">
+            <img src="images/./general_6.jpg" alt="general_6.jpg" onclick="open_image_viewer('images/./general_6.jpg')">
+            <img src="images/./general_2.jpg" alt="general_2.jpg" onclick="open_image_viewer('images/./general_2.jpg')">
+            <img src="images/./general_1.jpg" alt="general_1.jpg" onclick="open_image_viewer('images/./general_1.jpg')">
+            <img src="images/./general_3.jpg" alt="general_3.jpg" onclick="open_image_viewer('images/./general_3.jpg')">
+            <img src="images/./feedback_1.jpg" alt="feedback_1.jpg" onclick="open_image_viewer('images/./feedback_1.jpg')">
+            <img src="images/./resonator_1.jpg" alt="resonator_1.jpg" onclick="open_image_viewer('images/./resonator_1.jpg')">
+            <img src="images/./general_5.jpg" alt="general_5.jpg" onclick="open_image_viewer('images/./general_5.jpg')">
+            <img src="images/./supply_5.jpg" alt="supply_5.jpg" onclick="open_image_viewer('images/./supply_5.jpg')">
+            <img src="images/./general_10.jpg" alt="general_10.jpg" onclick="open_image_viewer('images/./general_10.jpg')">
+            <img src="images/./general_7.jpg" alt="general_7.jpg" onclick="open_image_viewer('images/./general_7.jpg')">
+            <img src="images/./output_3.jpg" alt="output_3.jpg" onclick="open_image_viewer('images/./output_3.jpg')">
+            <img src="images/./embed_image.jpg" alt="embed_image.jpg" onclick="open_image_viewer('images/./embed_image.jpg')">
+            <img src="images/./tube_2.jpg" alt="tube_2.jpg" onclick="open_image_viewer('images/./tube_2.jpg')"><h2 class='image-group-header'>schematic</h2>
+            <img src="images/schematic/uzzors2k_hfvttc.png" alt="uzzors2k_hfvttc.png" onclick="open_image_viewer('images/schematic/uzzors2k_hfvttc.png')">
+            </div>
+
+            <div class="image-viewer" onclick="close_image_viewer()">
+                <span class="close-btn" onclick="close_image_viewer()">&times;</span>
+                <img id="viewer-image" class="viewed-image" src="" alt="Viewer Image" onclick="zoom_image(event)">
+                <div class="nav-arrows">
+                    <div class="nav-arrow nav-arrow-left" onclick="navigate_image(event, -1)">&#8249;</div>
+                    <div class="nav-arrow nav-arrow-right" onclick="navigate_image(event, 1)">&#8250;</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="github-link">
+            <a href="https://github.com/9551-Dev">
+                <img src="https://github.com/9551-Dev.png" alt="github icon">
+            </a>
+        </div>
+    </div>
+
+    <script src="core/script.js"></script>
+</body>

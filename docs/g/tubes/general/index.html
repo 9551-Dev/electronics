@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+
+    
+    <meta content="Vacuum Tubes gallery" property="og:title" />
+    <meta content="All stuff tube related that was not worth its own category" property="og:description" />
+    <meta content="" property="og:url" />
+    <meta content="https://zap.devvie.cc/g/tubes/general/images/gu50%20pentode/gu50_4.jpg" property="og:image" />
+    <meta content="#eeeeee" data-react-helmet="true" name="theme-color" />
+    
+
+    <title>9551's vacuum tubes</title>
+    <link rel="stylesheet" href="core/style.css">
+</head>
+<body class="dark-mode">
+    <div class="container">
+        <div class="header-box">
+            <h1>Vacuum toobs!</h1>
+            <div class="button-container">
+                <button class="header-btn back-button" onclick="location.href='..'">Back</button>
+                <div class="button-wrapper">
+                    <button class="header-btn-lightmode" onclick="toggle_dark_mode()">Toggle Light Mode</button>
+                    <button class="header-btn-dir" onclick="location.href='./dir.html'">View directory</button>
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            <div class="markdown-container" >
+    <h3>Vacuum tubes!</h3>
+<p><span style="color: cyan">Who doesnt love them, here are some neat pictures of vacuum tubes</span></p>
+<p>And also some sad ones like this broken IV6 <mark>numitron</mark>..</p>
+<p>
+<div style="margin-left: 2%; margin-top: 15px"> <img alt="" onclick="open_image_viewer(&quot;./images/vfd/vfd_3.jpg&quot;,true)" src="./images/vfd/vfd_3.jpg" title="rip" /> </div>
+</p>
+            </div>
+            <div class="gallery">
+    <h2 class='image-group-header'>tube storage</h2>
+            <img src="images/tube storage/storage_2.jpg" alt="storage_2.jpg" onclick="open_image_viewer('images/tube storage/storage_2.jpg')">
+            <img src="images/tube storage/storage_3.jpg" alt="storage_3.jpg" onclick="open_image_viewer('images/tube storage/storage_3.jpg')">
+            <img src="images/tube storage/storage_1.jpg" alt="storage_1.jpg" onclick="open_image_viewer('images/tube storage/storage_1.jpg')"><h2 class='image-group-header'>gu50 pentode</h2>
+            <img src="images/gu50 pentode/gu50_4.jpg" alt="gu50_4.jpg" onclick="open_image_viewer('images/gu50 pentode/gu50_4.jpg')">
+            <img src="images/gu50 pentode/gu50_1.jpg" alt="gu50_1.jpg" onclick="open_image_viewer('images/gu50 pentode/gu50_1.jpg')">
+            <img src="images/gu50 pentode/gu50_2.jpg" alt="gu50_2.jpg" onclick="open_image_viewer('images/gu50 pentode/gu50_2.jpg')">
+            <img src="images/gu50 pentode/gu50_3.jpg" alt="gu50_3.jpg" onclick="open_image_viewer('images/gu50 pentode/gu50_3.jpg')"><h2 class='image-group-header'>misc</h2>
+            <img src="images/misc/random_1.jpg" alt="random_1.jpg" onclick="open_image_viewer('images/misc/random_1.jpg')">
+            <img src="images/misc/figure_1.jpg" alt="figure_1.jpg" onclick="open_image_viewer('images/misc/figure_1.jpg')">
+            <img src="images/misc/photomultiplier_1.jpg" alt="photomultiplier_1.jpg" onclick="open_image_viewer('images/misc/photomultiplier_1.jpg')"><h2 class='image-group-header'>vfd</h2>
+            <img src="images/vfd/vfd_1.jpg" alt="vfd_1.jpg" onclick="open_image_viewer('images/vfd/vfd_1.jpg')">
+            <img src="images/vfd/vfd_2.jpg" alt="vfd_2.jpg" onclick="open_image_viewer('images/vfd/vfd_2.jpg')">
+            <img src="images/vfd/vfd_4.jpg" alt="vfd_4.jpg" onclick="open_image_viewer('images/vfd/vfd_4.jpg')">
+            <img src="images/vfd/vfd_3.jpg" alt="vfd_3.jpg" onclick="open_image_viewer('images/vfd/vfd_3.jpg')">
+            </div>
+
+            <div class="image-viewer" onclick="close_image_viewer()">
+                <span class="close-btn" onclick="close_image_viewer()">&times;</span>
+                <img id="viewer-image" class="viewed-image" src="" alt="Viewer Image" onclick="zoom_image(event)">
+                <div class="nav-arrows">
+                    <div class="nav-arrow nav-arrow-left" onclick="navigate_image(event, -1)">&#8249;</div>
+                    <div class="nav-arrow nav-arrow-right" onclick="navigate_image(event, 1)">&#8250;</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="github-link">
+            <a href="https://github.com/9551-Dev">
+                <img src="https://github.com/9551-Dev.png" alt="github icon">
+            </a>
+        </div>
+    </div>
+
+    <script src="core/script.js"></script>
+</body>
